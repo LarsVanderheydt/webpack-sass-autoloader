@@ -1,6 +1,9 @@
 {
   "name": "webpack-sass-autoloader",
   "version": "1.0.1",
+  "keywords": [
+    "autoload", "sass", "webpack", "auto-import", "webpackplugin"
+  ],
   "description": "imports sass files from particular directory and makes a sass file with all imports",
   "main": "index.js",
   "author": "Lars Vanderheydt",
