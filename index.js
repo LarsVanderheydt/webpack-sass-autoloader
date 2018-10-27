@@ -10,9 +10,11 @@ class WebpackSassAutoloader {
 
   apply(compiler) {
     const { sassroot, file: style } = this.options.sass;
-    const importsfile = __dirname + sassroot + 'imports.scss';
-
+    const projectroot = path.resolve('./')
+    const importsfile = projectroot + sassroot + 'imports.scss';
+    
     compiler.hooks.done.tap('WebpackShellPlugin', () => {
+
       const walk = function(dir, done) {
         let results = [];
         fs.readdir(dir, function(err, list) {
@@ -40,19 +42,19 @@ class WebpackSassAutoloader {
         if (err) console.log(err);
 
         if (!fs.existsSync(importsfile)) {
-          fs.writeFile(importsfile, '', (err) => { if (err) throw err });
+          fs.writeFile(importsfile, '', (err) => { if (err) console.log(err) });
         }
       
         res.forEach(file => {
-          const f = file.replace(__dirname + sassroot, './');
+          const f = file.replace(projectroot + sassroot, './');
 
           fs.readFile(importsfile, 'utf8',(err, data) => {
-            if (err) throw err;
+            if (err) console.log(err);
             const check = data.search(`@import '${f}';`);
 
             if (check === -1) {
               fs.appendFile(importsfile, '\n' + `@import '${f}';`, function(err) {
-                if (err) throw new Error(err);
+                if (err) console.log(err);
                 console.log(`${f} imported to ${style}`);
               })
             }
