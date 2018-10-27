@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-class WebpackShellPlugin {
+class WebpackSassAutoloader {
   constructor(options) {
     this.options = options;
   }
@@ -65,4 +65,4 @@ class WebpackShellPlugin {
   }
 }
 
-module.exports = WebpackShellPlugin;
+module.exports = WebpackSassAutoloader;
