@@ -32,4 +32,4 @@ This can be achieved simply by saving another .scss file.
 - file was added to your imports
 
 # Todo
-check the (github board)[https://github.com/LarsVanderheydt/webpack-sass-autoloader/projects/1]
+check the [github board](https://github.com/LarsVanderheydt/webpack-sass-autoloader/projects/1)
