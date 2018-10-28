@@ -37,33 +37,6 @@ class WebpackSassAutoloader {
   }
 
   /**
-   * read directory recursive thanks to this stackoverflow answer
-   * https://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search#5827895
-   */
-  walk(dir, done) {
-    let results = [];
-    fs.readdir(dir, function(err, list) {
-      if (err) return done(err);
-      let pending = list.length;
-      if (!pending) return done(null, results);
-      list.forEach(function(file) {
-        file = path.resolve(dir, file);
-        fs.stat(file, function(_, stat) {
-          if (stat && stat.isDirectory()) {
-            walk(file, function(_, res) {
-              results = results.concat(res);
-              if (!--pending) done(null, results);
-            });
-          } else {
-            results.push(file);
-            if (!--pending) done(null, results);
-          }
-        });
-      });
-    });
-  };
-
-  /**
    * create/empty the imports file
    */
   emptyFile(importsfile) {
@@ -95,9 +68,36 @@ class WebpackSassAutoloader {
    * webpack hook
    */
   apply(compiler) {
-    const { walk, emptyFile, checkFile, append, dir, projectroot, importsfile } = this;
+    const { emptyFile, checkFile, append, dir, projectroot, importsfile } = this;
     
     compiler.hooks.done.tap('WebpackSassAutoloader', function() {
+        /**
+         * read directory recursive thanks to this stackoverflow answer
+         * https://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search#5827895
+         */
+        function walk(dir, done) {
+          
+          let results = [];
+          fs.readdir(dir, function(err, list) {
+            if (err) return done(err);
+            let pending = list.length;
+            if (!pending) return done(null, results);
+            list.forEach(function(file) {
+              file = path.resolve(dir, file);
+              fs.stat(file, function(_, stat) {
+                if (stat && stat.isDirectory()) {
+                  walk(file, function(_, res) {
+                    results = results.concat(res);
+                    if (!--pending) done(null, results);
+                  });
+                } else {
+                  results.push(file);
+                  if (!--pending) done(null, results);
+                }
+              });
+            });
+          });
+        };
       walk(dir, function(err, res) {
         if (err) console.log(err);        
         if (!fs.existsSync(importsfile)) emptyFile(importsfile);
